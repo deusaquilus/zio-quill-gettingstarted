@@ -1,4 +1,4 @@
-package quixotic
+package example
 
 import io.getquill.context.ZioJdbc._
 import zio._
@@ -32,7 +32,7 @@ final case class DataServiceLive(dataSource: DataSource) {
      run(query[Person].filter(p => p.age > lift(age))).provide(env)
 }
 
-object ZioApp extends App {
+object Main extends App {
    override def run(args: List[String]) =
       DataService.getPeople
         .inject(QuillContext.dataSourceLayer, DataServiceLive.layer)
