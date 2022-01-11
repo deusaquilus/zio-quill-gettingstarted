@@ -8,7 +8,7 @@ For a slighly more complete example try: [quill-examples-zymposium](https://gith
 2. Run the start script: `./start.sh`
 3. Compile and run the examples: `sbt 'runMain example.Main'`
    ```
-   > sbt 'runMain quixotic.Main'
+   > sbt 'runMain example.Main'
    List((Person(2,Vlad,Dracul,321),Address(2,Bran Castle,11111,Transylvania)), (Person(2,Vlad,Dracul,321),Address(2,Ambras Castle,11111,Innsbruck)))
    ```
 4. Stop the container `./stop.sh`
