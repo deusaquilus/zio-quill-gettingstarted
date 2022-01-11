@@ -1,0 +1,12 @@
+.bsp
+target/
+.bloop
+.idea
+.history
+.metals/
+.vscode/
+.project
+.settings
+/queries.sql
+metals.sbt
+project/
