@@ -1,14 +1,17 @@
 # ZIO-Quill Getting Started
 
-This is a trivial example using ZIO-Quill with some helpful scripts to automatically setup a postgres database.
-For a slighly more complete example try: [quill-examples-zymposium](https://github.com/kitlangton/quill-examples-zymposium).
+This is a very simple starter codebase using ZIO-Quill with some helpful scripts to automatically setup a postgres database. For a slighly more complete example try: [quill-examples-zymposium](https://github.com/kitlangton/quill-examples-zymposium).
+
+* The code in `src/main/scala/example/simple` shows a really simple of example of how to use the quill-jdbc-zio context.
+* The code in `src/main/scala/example/module` shows how to use the quill-jdbc-zio context using a module 2.0 pattern.
+
 
 ## Instructions
 1. Download and install docker.
 2. Run the start script: `./start.sh`
-3. Compile and run the examples: `sbt 'runMain example.Main'`
+3. Compile and run the examples: `sbt 'runMain example.simple.Main'` (or `sbt 'runMain example.module.Main'`)
    ```
-   > sbt 'runMain example.Main'
+   > sbt 'runMain example.simple.Main'
    [info] compiling 1 Scala source to /path/zio-quill-gettingstarted/target/scala-2.13/classes ...
    [info] /path/zio-quill-gettingstarted/src/main/scala/example/Main.scala:30:9: SELECT x.name, x.age FROM person x
    [info]      run(query[Person]).provide(env)
