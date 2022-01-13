@@ -9,7 +9,7 @@ This is a very simple starter codebase using ZIO-Quill with some helpful scripts
 ## Instructions
 1. Download and install docker.
 2. Clone this repo: `git clone 'https://github.com/deusaquilus/zio-quill-gettingstarted.git'`
-3. Run the start script: `./start.sh`
+3. Run the start script: `./start.sh` to start the postgres docker image.
 4. Compile and run the examples: `sbt 'runMain example.simple.Main'` (or `sbt 'runMain example.module.Main'`)
    ```
    > sbt 'runMain example.simple.Main'
