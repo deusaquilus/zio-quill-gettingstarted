@@ -1,18 +1,12 @@
 package example.module
 
-import io.getquill.context.ZioJdbc._
-import zio._
 import io.getquill._
-import zio.magic._
+import io.getquill.jdbczio.Quill
+import zio._
 
 import java.sql.SQLException
-import javax.sql.DataSource
 
 case class Person(name: String, age: Int)
-
-object QuillContext extends PostgresZioJdbcContext(SnakeCase) {
-   val dataSourceLayer = DataSourceLayer.fromPrefix("myDatabaseConfig").orDie
-}
 
 trait DataService {
   def getPeople: ZIO[Any, SQLException, List[Person]]
@@ -20,30 +14,32 @@ trait DataService {
 }
 
 object DataService {
-   def getPeople = ZIO.serviceWith[DataService](_.getPeople)
-   def getPeopleOlderThan(age: Int) = ZIO.serviceWith[DataService](_.getPeopleOlderThan(age))
+   def getPeople = ZIO.serviceWithZIO[DataService](_.getPeople)
+   def getPeopleOlderThan(age: Int) = ZIO.serviceWithZIO[DataService](_.getPeopleOlderThan(age))
 }
 
 object DataServiceLive {
-   val layer = (DataServiceLive.apply _).toLayer[DataService]
+   val layer = ZLayer.fromFunction(DataServiceLive.apply _)
 }
 
-final case class DataServiceLive(dataSource: DataSource) extends DataService {
-   import QuillContext._
-   val env = Has(dataSource)
-   def getPeople =
-     run(query[Person]).provide(env)
-   def getPeopleOlderThan(age: Int) =
-     run(query[Person].filter(p => p.age > lift(age))).provide(env)
+final case class DataServiceLive(quill: Quill.Postgres[SnakeCase]) extends DataService {
+  import quill._
+  def getPeople =
+    run(query[Person])
+  def getPeopleOlderThan(age: Int) =
+    run(query[Person].filter(p => p.age > lift(age)))
 }
 
 /**
  * Demonstrates using Quill with a ZIO Module 2.0 pattern.
  */
-object Main extends App {
-   override def run(args: List[String]) =
-      DataService.getPeople
-        .inject(QuillContext.dataSourceLayer, DataServiceLive.layer)
-        .debug("Results")
-        .exitCode
+object Main extends ZIOAppDefault {
+  val quillLayer = Quill.Postgres.fromNamingStrategy(SnakeCase)
+  val dsLayer = Quill.DataSource.fromPrefix("myDatabaseConfig")
+
+  override def run =
+    DataService.getPeople
+      .provide(quillLayer, dsLayer, DataServiceLive.layer)
+      .debug("Results")
+      .exitCode
 }

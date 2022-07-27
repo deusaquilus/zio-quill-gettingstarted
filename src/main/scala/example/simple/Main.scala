@@ -1,29 +1,36 @@
 package example.simple
 
-import io.getquill.context.ZioJdbc._
-import zio._
 import io.getquill._
-import zio.magic._
+import io.getquill.jdbczio.Quill
+import zio.{ZIO, ZIOAppDefault, ZLayer}
 
 import java.sql.SQLException
-import javax.sql.DataSource
 
 case class Person(name: String, age: Int)
 
-object QuillContext extends PostgresZioJdbcContext(SnakeCase)
-
+class DataService(quill: Quill.Postgres[SnakeCase]) {
+  import quill._
+  def getPeople: ZIO[Any, SQLException, List[Person]] = run(query[Person])
+}
 object DataService {
-   import QuillContext._
-   def getPeople = run(query[Person])
+  def getPeople: ZIO[DataService, SQLException, List[Person]] =
+    ZIO.serviceWithZIO[DataService](_.getPeople)
+
+  val live = ZLayer.fromFunction(new DataService(_))
 }
 
 /**
  * Simple example of Quill using the jdbc-zio context
  */
-object Main extends App {
-   override def run(args: List[String]) =
-      DataService.getPeople
-        .inject(DataSourceLayer.fromPrefix("myDatabaseConfig").orDie)
-        .debug("Results")
-        .exitCode
+object Main extends ZIOAppDefault {
+  override def run = {
+    DataService.getPeople
+      .provide(
+        DataService.live,
+        Quill.Postgres.fromNamingStrategy(SnakeCase),
+        Quill.DataSource.fromPrefix("myDatabaseConfig")
+      )
+      .debug("Results")
+      .exitCode
+  }
 }

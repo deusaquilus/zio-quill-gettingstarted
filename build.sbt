@@ -6,9 +6,13 @@ ThisBuild / organizationName := "example"
 lazy val root = (project in file("."))
   .settings(
     name := "quill-2",
+    resolvers ++= Seq(
+      Resolver.mavenLocal,
+      "Sonatype OSS Snapshots" at "https://oss.sonatype.org/content/repositories/snapshots",
+      "Sonatype OSS Releases" at "https://oss.sonatype.org/content/repositories/releases"
+    ),
     libraryDependencies ++= Seq(
-      "io.getquill"          %% "quill-jdbc-zio" % "3.12.0",
-      "io.github.kitlangton" %% "zio-magic"      % "0.3.11",
+      "io.getquill"          %% "quill-jdbc-zio" % "4.1.1-SNAPSHOT",
       "org.postgresql"       %  "postgresql"     % "42.3.1"
     )
   )
