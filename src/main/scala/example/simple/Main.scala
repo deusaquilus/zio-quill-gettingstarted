@@ -10,7 +10,7 @@ case class Person(name: String, age: Int)
 
 class DataService(quill: Quill.Postgres[SnakeCase]) {
   import quill._
-  def getPeople: ZIO[Any, SQLException, List[Person]] = run(query[Person])
+  def getPeople: ZIO[Any, SQLException, List[Person]] = run(query[Person]) 
 }
 object DataService {
   def getPeople: ZIO[DataService, SQLException, List[Person]] =

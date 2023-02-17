@@ -10,3 +10,4 @@ target/
 /queries.sql
 metals.sbt
 project/
+db.session.sql
